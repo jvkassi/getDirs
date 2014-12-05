@@ -60,7 +60,7 @@ exports.nested=function(dir,opt,cb)
         cb=opt;
     opt||(opt={});
 
-    var accumulator={name:path.basename(dir),dir:[]};
+    var accumulator={name:path.basename(dir),dir:{},dirnames:[]};
 
     var inError=false;
     var callbacksFinished=0;
@@ -72,7 +72,7 @@ exports.nested=function(dir,opt,cb)
             cb(null,accumulator);
     }
 
-    function getDirectories(dir,outDir,outFiles)
+    function getDirectories(dir,outDirNames,outDir,outFiles)
     {
         if (inError)
             return;
@@ -117,9 +117,10 @@ exports.nested=function(dir,opt,cb)
                         if (ev.isDirectory())
                         {
                             callbacksAwaited++;
-                            var newOutputObj={name:theFile,dir:[]};
-                            outDir.push(newOutputObj);
-                            getDirectories(fileDir,newOutputObj.dir,opt.includeFiles&&(newOutputObj.files=[]));
+                            var newOutputObj={name:theFile,dir:{},dirnames:[]};
+                            outDirNames.push(theFile);
+                            outDir[theFile]=(newOutputObj);
+                            getDirectories(fileDir,newOutputObj.dirnames,newOutputObj.dir,opt.includeFiles&&(newOutputObj.files=[]));
                         }
                         else if (opt.includeFiles)
                             outFiles.push(theFile);
@@ -131,5 +132,5 @@ exports.nested=function(dir,opt,cb)
             }
         });
     }
-    getDirectories(dir,accumulator.dir,opt.includeFiles&&(accumulator.files=[]));
+    getDirectories(dir,accumulator.dirnames,accumulator.dir,opt.includeFiles&&(accumulator.files=[]));
 };

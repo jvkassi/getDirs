@@ -56,7 +56,8 @@ Retrieves a nested listing of all the folders within a directory.The returned ob
 ```
 {
     name: Name of the folder
-    dir: Array of objects with the same structure as this that represent the nested folders
+    dir: Object. Keys are folder names , values are objects with the same structure as this that represent the nested folders
+    dirnames:Array of strings,containg the names of the immediate child folders
     files:Array of filenames in directory.This property ONLY exists if includeFiles==true for the below options
 }
 ```

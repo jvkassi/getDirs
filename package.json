@@ -1,0 +1,24 @@
+{
+    "name": "getdirs",
+    "author": "titon <titon1235@gmail.com>",
+    "version": "0.0.1",
+    "description": "Utility for retrieving a list of folders within a directory",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/EitriumTech/getDirs.git"
+    },
+    "main": "./index.js",
+    "dependencies": {},
+    "bugs": {
+        "url": "https://github.com/EitriumTech/getDirs/issues",
+        "email": "titon1235@gmail.com"
+    },
+    "homepage": "https://github.com/EitriumTech/getDirs",
+    "maintainers": [
+        {
+            "name": "titon",
+            "email": "titon1235@gmail.com"
+        }
+    ],
+
+}

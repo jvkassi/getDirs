@@ -57,6 +57,7 @@ Retrieves a nested listing of all the folders within a directory.The returned ob
 {
     name: Name of the folder
     dir: Array of objects with the same structure as this that represent the nested folders
+    files:Array of filenames in directory.This property ONLY exists if includeFiles==true for the below options
 }
 ```
 
@@ -67,6 +68,7 @@ Retrieves a nested listing of all the folders within a directory.The returned ob
 Possible options:
 ```none
     noHidden : Boolean .Whether to list hidden directories , ie those that start with '.'. Default : false , hidden folders will be shown 
+    includeFiles:Boolean.Whether to add file listing to the returned object. Default false.
 ```
 
 **callback**: Function . Callback function that adheres to the format function(err,out)

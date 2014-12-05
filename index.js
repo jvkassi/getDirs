@@ -60,7 +60,6 @@ exports.nested=function(dir,opt,cb)
         cb=opt;
     opt||(opt={});
 
-
     var accumulator={name:path.basename(dir),dir:[]};
 
     var inError=false;
@@ -73,9 +72,8 @@ exports.nested=function(dir,opt,cb)
             cb(null,accumulator);
     }
 
-    function getDirectories(dir,outputObj)
+    function getDirectories(dir,outDir,outFiles)
     {
-
         if (inError)
             return;
         fs.readdir(dir,function(err,files)
@@ -102,7 +100,7 @@ exports.nested=function(dir,opt,cb)
                     continue;
                 }
 
-                var fileDir=path.resolve(dir+"/"+inQuestion);
+                var fileDir=path.join(dir,inQuestion);
                 fs.stat(fileDir,(function(fileDir,theFile)
                 {
                     return function (err, ev)
@@ -120,10 +118,11 @@ exports.nested=function(dir,opt,cb)
                         {
                             callbacksAwaited++;
                             var newOutputObj={name:theFile,dir:[]};
-                            outputObj.push(newOutputObj);
-
-                            getDirectories(fileDir,newOutputObj.dir);
+                            outDir.push(newOutputObj);
+                            getDirectories(fileDir,newOutputObj.dir,opt.includeFiles&&(newOutputObj.files=[]));
                         }
+                        else if (opt.includeFiles)
+                            outFiles.push(theFile);
 
                         if (++counter==c)
                             DirectoryCheckDone();
@@ -132,5 +131,5 @@ exports.nested=function(dir,opt,cb)
             }
         });
     }
-    getDirectories(dir,accumulator.dir);
+    getDirectories(dir,accumulator.dir,opt.includeFiles&&(accumulator.files=[]));
 };

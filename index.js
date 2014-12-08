@@ -4,7 +4,10 @@ var path=require('path');
 exports.flat=function (dir,opt,cb)
 {
     if (arguments.length==2)
-        cb=opt;
+    {
+        cb = opt;
+        opt=undefined
+    }
 
     opt||(opt={});
 
@@ -64,7 +67,11 @@ exports.flat=function (dir,opt,cb)
 exports.nested=function(dir,opt,cb)
 {
     if (arguments.length==2)
+    {
         cb=opt;
+        opt=undefined;
+    }
+
     opt||(opt={});
 
     opt.filter||(opt.filter=function(name)
@@ -166,4 +173,27 @@ exports.nested=function(dir,opt,cb)
         });
     }
     getDirectories(dir,accumulator);
+};
+
+exports.list=function(root,relpath)
+{
+    var chunks=path.normalize(relpath).split(path.sep);
+
+    //Standard format
+    /*var newObj=
+    {
+        name:dirname,
+        dir:{},
+        dirnames:[]
+    };*/
+
+    for (var i= 0,c=chunks.length;i<c;i++)
+    {
+        var chunk=chunks[i];
+        root=root.dir[chunk];
+        if (!root)
+            return undefined;
+    }
+
+    return root;
 };

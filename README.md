@@ -80,7 +80,7 @@ Possible options:
 
 **callback**: Function . Callback function that adheres to the format: function(err,out)
 
-
+Example of projection mapping
 ```js
 //example 
 var path = require('path');
@@ -95,8 +95,29 @@ var newFolder=function(parent,name,abspath)
 
 getdir.nested(path.resolve('./'),{noHidden:true},function(err,out)
 {
-    console.log(out);
+    //etc
 });
 
+```
+
+###list(root,relpath)
+
+Retrieves the correct folder object from the tree relative to the root path of the folder directory
+
+**root**: Object. The **standard** output object from the **nested** function.This only works if you have not modified the newFolder and newFile arguments in the options object 
+
+**relpath**: String. A relative path to the root object.
+
+Returns undefined if no structure exists within the root object that follows that path else returns the relative root that adheres to the path.It will have the same structure as the output from **nested**
+
+```js
+var path = require('path');
+var getdir=require('../');
+
+getdir.nested(path.resolve('./'),function(err,out)
+{
+    var relroot=gedir.list(out,"some/relative/path");
+});
 
 ```
+

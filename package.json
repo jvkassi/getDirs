@@ -1,7 +1,7 @@
 {
     "name": "getdirs",
     "author": "titon <titon1235@gmail.com>",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Utility for retrieving a list of folders within a directory",
     "repository": {
         "type": "git",

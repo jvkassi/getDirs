@@ -201,6 +201,8 @@ exports.nested=function(dir,opt,cb)
     opt.newFolder||(opt.newFolder=newFolder);
 
     var accumulator=opt.newFolder(null,path.basename(dir),dir);
+    if (opt.includeFile&&opt.newFolder===newFolder)
+        accumulator.filenames=[];
 
     var inError=false;
     var callbacksFinished=0;

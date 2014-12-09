@@ -154,6 +154,8 @@ exports.nestedSync=function(dir,opt)
     dir=path.normalize(dir);
 
     var accumulator=opt.newFolder(null,path.basename(dir),dir);
+    if (opt.includeFile&&opt.newFolder===newFolder)
+        accumulator.filenames=[];
 
     function getDirectories(dir,parent)
     {

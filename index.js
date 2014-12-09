@@ -1,6 +1,74 @@
 var fs=require('fs');
 var path=require('path');
 
+function allFilter()
+{
+    return true;
+}
+function newFile(parent,filename,path)
+{
+    parent.filenames.push(filename);
+}
+function newFolder(parent,dirname,path)
+{
+    var newObj=
+    {
+        name:dirname,
+        dir:{},
+        dirnames:[]
+    };
+    //Link to parent
+    if (parent)
+    {
+        parent.dirnames.push(dirname);
+        parent.dir[dirname]=newObj;
+    }
+    return newObj;
+}
+
+exports.flatSync=function(dir,opt)
+{
+    opt||(opt={});
+
+    dir=path.normalize(dir);
+
+    var accumulator=opt.asObj?{}:[];
+
+    var files=fs.readdirSync(dir);
+
+    var i= 0,c=files.length;
+    //Optimizations to avoid stat calls
+    if (opt.includeFiles)
+    {
+        if (!opt.asObj)
+            return files;
+        //Object iteration
+        for (;i<c;i++)
+            accumulator[files[i]]=true;
+        return accumulator;
+    }
+
+    for (;i<c;i++)
+    {
+        var inQuestion=files[i];
+
+        //Skip hidden files or ignored files if enabled
+        if (opt.noHidden&&inQuestion[0]=='.')
+            continue;
+
+        var ev=fs.statSync(path.join(dir,inQuestion));
+        var isdir=ev.isDirectory();
+
+        if ((isdir&&!opt.onlyFiles)||(!isdir&&opt.onlyFiles))
+        {
+            if (opt.asObj)
+                accumulator[inQuestion]=true;
+            else
+                accumulator.push(inQuestion);
+        }
+    }
+    return accumulator;
+};
 exports.flat=function (dir,opt,cb)
 {
     if (arguments.length==2)
@@ -10,14 +78,9 @@ exports.flat=function (dir,opt,cb)
     }
 
     opt||(opt={});
+    dir=path.normalize(dir);
 
-    //Filter that accepts all
-    opt.filter||(opt.filter=function(file)
-    {
-        return true;
-    });
-
-    var accumulator=[];
+    var accumulator=opt.asObj?{}:[];
     var inError=false;
 
     fs.readdir(dir,function(err,files)
@@ -27,9 +90,20 @@ exports.flat=function (dir,opt,cb)
             inError=true;
             return cb(err);
         }
-        var counter= 0,c=files.length;
+        var counter= 0,c=files.length,i=0;
 
-        for (var i= 0;i<c;i++)
+        //Optimizations to avoid stat calls
+        if (opt.includeFiles)
+        {
+            if (!opt.asObj)
+                return files;
+            //Object iteration
+            for (;i<c;i++)
+                accumulator[files[i]]=true;
+            return accumulator;
+        }
+
+        for (;i<c;i++)
         {
             var inQuestion=files[i];
 
@@ -40,7 +114,7 @@ exports.flat=function (dir,opt,cb)
                 continue;
             }
 
-            fs.stat(inQuestion,(function(theFile)
+            fs.stat(path.join(dir,inQuestion),(function(theFile)
             {
                 return function (err, ev)
                 {
@@ -53,8 +127,15 @@ exports.flat=function (dir,opt,cb)
                         return cb(err);
                     }
 
-                    if (ev.isDirectory()&&opt.filter(theFile))
-                        accumulator.push(theFile);
+                    var isdir=ev.isDirectory();
+
+                    if ((isdir&&!opt.onlyFiles)||(!isdir&&opt.onlyFiles))
+                    {
+                        if (opt.asObj)
+                            accumulator[inQuestion]=true;
+                        else
+                            accumulator.push(inQuestion);
+                    }
 
                     if (++counter==c)
                         cb(null,accumulator);
@@ -63,7 +144,46 @@ exports.flat=function (dir,opt,cb)
         }
     });
 };
+exports.nestedSync=function(dir,opt)
+{
+    opt||(opt={});
 
+    opt.filter||(opt.filter=allFilter);
+    opt.newFile||(opt.newFile=newFile);
+    opt.newFolder||(opt.newFolder=newFolder);
+    dir=path.normalize(dir);
+
+    var accumulator=opt.newFolder(null,path.basename(dir),dir);
+
+    function getDirectories(dir,parent)
+    {
+        var files=fs.readdirSync(dir);
+
+        for (var i= 0,c=files.length;i<c;i++)
+        {
+            var inQuestion=files[i];
+
+            //Skip hidden files or ignored files if enabled
+            if (opt.noHidden&&inQuestion[0]=='.'||!opt.filter(path.join(dir,inQuestion)))
+                continue;
+
+            var fileDir=path.join(dir,inQuestion);
+            var ev=fs.statSync(fileDir);
+
+            if (ev.isDirectory())
+            {
+                var newBranch=opt.newFolder(parent,inQuestion,fileDir);
+                if (opt.includeFile&&opt.newFolder===newFolder)
+                    newBranch.filenames=[];
+                getDirectories(fileDir,newBranch);
+            }
+            else if (opt.includeFiles)
+                opt.newFile(parent,inQuestion,fileDir);
+       }
+    }
+     getDirectories(dir,accumulator);
+    return accumulator;
+};
 exports.nested=function(dir,opt,cb)
 {
     if (arguments.length==2)
@@ -72,34 +192,11 @@ exports.nested=function(dir,opt,cb)
         opt=undefined;
     }
 
+    dir=path.normalize(dir);
     opt||(opt={});
-
-    opt.filter||(opt.filter=function(name)
-    {
-        return true;
-    });
-    opt.newFile||(opt.newFile=function(parent,filename,path)
-    {
-        parent.filenames.push(filename);
-    });
-    opt.newFolder||(opt.newFolder=function(parent,dirname,path)
-    {
-       var newObj=
-       {
-           name:dirname,
-           dir:{},
-           dirnames:[]
-       };
-       opt.includeFiles&&(newObj.filenames=[]);
-
-       //Link ot parent
-        if (parent)
-        {
-            parent.dirnames.push(dirname);
-            parent.dir[dirname]=newObj;
-        }
-       return newObj;
-    });
+    opt.filter||(opt.filter=allFilter);
+    opt.newFile||(opt.newFile=newFile);
+    opt.newFolder||(opt.newFolder=newFolder);
 
     var accumulator=opt.newFolder(null,path.basename(dir),dir);
 
@@ -125,6 +222,7 @@ exports.nested=function(dir,opt,cb)
                 inError=true;
                 return cb(err);
             }
+
             var counter= 0,c=files.length;
 
             //If no files in directory ie filelength==0
@@ -160,6 +258,9 @@ exports.nested=function(dir,opt,cb)
                         {
                             callbacksAwaited++;
                             var newBranch=opt.newFolder(parent,theFile,fileDir);
+                            if (opt.includeFile&&opt.newFolder===newFolder)
+                                newBranch.filenames=[];
+
                             getDirectories(fileDir,newBranch);
                         }
                         else if (opt.includeFiles)
@@ -174,19 +275,9 @@ exports.nested=function(dir,opt,cb)
     }
     getDirectories(dir,accumulator);
 };
-
 exports.list=function(root,relpath)
 {
     var chunks=path.normalize(relpath).split(path.sep);
-
-    //Standard format
-    /*var newObj=
-    {
-        name:dirname,
-        dir:{},
-        dirnames:[]
-    };*/
-
     for (var i= 0,c=chunks.length;i<c;i++)
     {
         var chunk=chunks[i];
@@ -194,6 +285,5 @@ exports.list=function(root,relpath)
         if (!root)
             return undefined;
     }
-
     return root;
 };

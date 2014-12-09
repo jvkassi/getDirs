@@ -37,16 +37,23 @@ getdirs.nested(path.resolve("./"),{},function(err,out)
 ###flat(directory,[options],callback)
 
 Retrieves a flat listing of all the folders within a directory,ie if there are nested folders, these are not listed.Flat listing is included for optimization.
-
+T
 **directory**: String .Path to directory.
 
 **options**: Obj
 
 --*noHidden* : Boolean .Whether to list hidden directories , ie those that start with '.'. Default : false , hidden folders will be shown 
 
---*filter*:function .A function that adheres to function(dirname) which returns true if the directory must be included
+--*asObj*    : Boolean .Returns an object literal instead of array.
 
-**callback**: Function . Callback function that adheres to the format function(err,out)
+--*onlyFiles*: Boolean .Returns file names instead of directory names
+
+--*includeFiles*: Boolean .Returns file and directory names without distinction
+
+**callback**: Function . Callback function that adheres to the format function(err,out).Out is an array  of strings
+
+###flatSync(directory,[options])
+Synchronous version of **flat**
 
 ###nested(directory,[options],callback)
 
@@ -98,6 +105,8 @@ getdir.nested(path.resolve('./'),{noHidden:true,newFolder:newFolder},function(er
 });
 
 ```
+###nestedSync(directory,[options])
+Synchronous version of **nested**
 
 ###list(root,relpath)
 

@@ -1,8 +1,8 @@
 {
     "name": "getdirs",
     "author": "titon <titon1235@gmail.com>",
-    "version": "0.2.1",
-    "description": "Utility for retrieving a listing file directories",
+    "version": "0.2.2",
+    "description": "Utility for retrieving a listing of file directories",
     "repository": {
         "type": "git",
         "url": "git://github.com/EitriumTech/getDirs.git"

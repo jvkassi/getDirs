@@ -55,6 +55,22 @@ T
 ###flatSync(directory,[options])
 Synchronous version of **flat**
 
+```js
+
+var allFolders=getdirs.flat("/etc/");
+//['something']
+
+var allFoldersObj=getdirs.flat("/etc/",{asObj:true});
+//{'something':true}
+
+var allFiles=getdirs.flat("/etc/",{onlyFiles:true});
+//['something.else']
+
+var all=getdirs.flat("/etc/",{includeFiles:true});
+//['something','something.else']
+
+```
+
 ###nested(directory,[options],callback)
 
 Retrieves a nested listing of all the folders within a directory.The *default* returned object will adhere to the structure 
@@ -90,7 +106,6 @@ Example of projection mapping
 ```js
 //example 
 var path = require('path');
-var getdir=require('../');
 
 var newFolder=function(parent,name,abspath)
 {
@@ -120,7 +135,6 @@ Returns undefined if no structure exists within the root object that follows tha
 
 ```js
 var path = require('path');
-var getdir=require('../');
 
 getdir.nested(path.resolve('./'),function(err,out)
 {

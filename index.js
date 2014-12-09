@@ -96,11 +96,11 @@ exports.flat=function (dir,opt,cb)
         if (opt.includeFiles)
         {
             if (!opt.asObj)
-                return files;
+                return cb(null,files);
             //Object iteration
             for (;i<c;i++)
                 accumulator[files[i]]=true;
-            return accumulator;
+            return cb(null,accumulator);
         }
 
         for (;i<c;i++)

@@ -154,7 +154,7 @@ exports.nestedSync=function(dir,opt)
     dir=path.normalize(dir);
 
     var accumulator=opt.newFolder(null,path.basename(dir),dir);
-    if (opt.includeFile&&opt.newFolder===newFolder)
+    if (opt.includeFiles&&opt.newFolder===newFolder)
         accumulator.filenames=[];
 
     function getDirectories(dir,parent)
@@ -175,7 +175,7 @@ exports.nestedSync=function(dir,opt)
             if (ev.isDirectory())
             {
                 var newBranch=opt.newFolder(parent,inQuestion,fileDir);
-                if (opt.includeFile&&opt.newFolder===newFolder)
+                if (opt.includeFiles&&opt.newFolder===newFolder)
                     newBranch.filenames=[];
                 getDirectories(fileDir,newBranch);
             }
@@ -201,7 +201,7 @@ exports.nested=function(dir,opt,cb)
     opt.newFolder||(opt.newFolder=newFolder);
 
     var accumulator=opt.newFolder(null,path.basename(dir),dir);
-    if (opt.includeFile&&opt.newFolder===newFolder)
+    if (opt.includeFiles&&opt.newFolder===newFolder)
         accumulator.filenames=[];
 
     var inError=false;
@@ -262,7 +262,7 @@ exports.nested=function(dir,opt,cb)
                         {
                             callbacksAwaited++;
                             var newBranch=opt.newFolder(parent,theFile,fileDir);
-                            if (opt.includeFile&&opt.newFolder===newFolder)
+                            if (opt.includeFiles&&opt.newFolder===newFolder)
                                 newBranch.filenames=[];
 
                             getDirectories(fileDir,newBranch);

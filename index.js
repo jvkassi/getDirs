@@ -183,6 +183,8 @@ exports.nestedSync=function(dir,opt)
                 var newBranch=opt.newFolder(parent,inQuestion,fileDir);
                 if (opt.includeFiles&&opt.newFolder===newFolder)
                     newBranch.filenames=[];
+                if (opt.includeFileStats)
+                    newBranch.fileStats={};
                 getDirectories(fileDir,newBranch);
             }
             else if (opt.includeFiles)
@@ -273,6 +275,8 @@ exports.nested=function(dir,opt,cb)
                             var newBranch=opt.newFolder(parent,theFile,fileDir);
                             if (opt.includeFiles&&opt.newFolder===newFolder)
                                 newBranch.filenames=[];
+                            if (opt.includeFileStats)
+                                newBranch.fileStats={};
 
                             getDirectories(fileDir,newBranch);
                         }

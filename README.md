@@ -82,8 +82,8 @@ Retrieves a nested listing of all the folders within a directory.The *default* r
     //dirnames:Array of strings.Names of the immediate child folders
     //filenames:Array of filenames in directory.
     //filenames ONLY exists if includeFiles==true for the below options 
-    //fileStats:Object with stat objects of file with filename as object key
-    //filenames ONLY exists if includeFiles==true AND includeFileStats==true for the below options 
+    //fileStats:Object with stat objects of files with filename as object key
+    //fileStats ONLY exists if includeFiles==true AND includeFileStats==true for the below options 
 }
 ```
 This can be changed by altering the **options** newFile and newFolder argument.
@@ -96,7 +96,7 @@ This can be changed by altering the **options** newFile and newFolder argument.
 
 --*includeFiles*:Boolean.Whether to add file listing to the returned object. Default false.
 
---*includeFiles*:Boolean.Whether to include file Stat objects. Default false
+--*includeFileStats*:Boolean.Whether to include file Stat objects. Default false
 
 --*filter* : function. A function that adheres to the format(dirname).Return false if you do not desire the file passed to you
 

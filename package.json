@@ -1,7 +1,7 @@
 {
     "name": "getdirs",
     "author": "titon <titon1235@gmail.com>",
-    "version": "0.2.8",
+    "version": "0.2.9",
     "keywords":"file directory stat list tree hierachy",
     "description": "Utility for retrieving a listing of file directories",
     "repository": {

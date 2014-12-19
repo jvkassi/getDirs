@@ -5,9 +5,11 @@ function allFilter()
 {
     return true;
 }
-function newFile(parent,filename,path)
+function newFile(parent,filename,path,stats)
 {
     parent.filenames.push(filename);
+    if (stats)
+        parent.fileStats[filename]=stats;
 }
 function newFolder(parent,dirname,path)
 {
@@ -154,8 +156,12 @@ exports.nestedSync=function(dir,opt)
     dir=path.normalize(dir);
 
     var accumulator=opt.newFolder(null,path.basename(dir),dir);
+
     if (opt.includeFiles&&opt.newFolder===newFolder)
         accumulator.filenames=[];
+
+    if (opt.includeFileStats)
+        accumulator.fileStats={};
 
     function getDirectories(dir,parent)
     {
@@ -180,7 +186,7 @@ exports.nestedSync=function(dir,opt)
                 getDirectories(fileDir,newBranch);
             }
             else if (opt.includeFiles)
-                opt.newFile(parent,inQuestion,fileDir);
+                opt.newFile(parent,inQuestion,fileDir,opt.includeFileStats?ev:null);
        }
     }
      getDirectories(dir,accumulator);
@@ -203,6 +209,9 @@ exports.nested=function(dir,opt,cb)
     var accumulator=opt.newFolder(null,path.basename(dir),dir);
     if (opt.includeFiles&&opt.newFolder===newFolder)
         accumulator.filenames=[];
+    if (opt.includeFileStats)
+        accumulator.fileStats={};
+
 
     var inError=false;
     var callbacksFinished=0;
@@ -268,7 +277,7 @@ exports.nested=function(dir,opt,cb)
                             getDirectories(fileDir,newBranch);
                         }
                         else if (opt.includeFiles)
-                            opt.newFile(parent,theFile,fileDir);
+                            opt.newFile(parent,theFile,fileDir,opt.includeFileStats?ev:null);
 
                         if (++counter==c)
                             DirectoryCheckDone();

@@ -81,7 +81,9 @@ Retrieves a nested listing of all the folders within a directory.The *default* r
     //dir: Object. Keys are folder names , values are these object
     //dirnames:Array of strings.Names of the immediate child folders
     //filenames:Array of filenames in directory.
-    //filenames ONLY exists if includeFiles==true for the below options */
+    //filenames ONLY exists if includeFiles==true for the below options 
+    //fileStats:Object with stat objects of file with filename as object key
+    //filenames ONLY exists if includeFiles==true AND includeFileStats==true for the below options 
 }
 ```
 This can be changed by altering the **options** newFile and newFolder argument.
@@ -94,9 +96,11 @@ This can be changed by altering the **options** newFile and newFolder argument.
 
 --*includeFiles*:Boolean.Whether to add file listing to the returned object. Default false.
 
+--*includeFiles*:Boolean.Whether to include file Stat objects. Default false
+
 --*filter* : function. A function that adheres to the format(dirname).Return false if you do not desire the file passed to you
 
---*newFile*: function to execute on encountering a file in the filepath when includeFiles is true . function(parent,filename,absolutefilepath)
+--*newFile*: function to execute on encountering a file in the filepath when includeFiles is true . function(parent,filename,absolutefilepath,stats)
 
 --*newFolder*: function to execute on encountering a folder.function(parent,filename,absolutefilepath). Be aware that the first call will have an undefined parent as it will be the root folder object
 

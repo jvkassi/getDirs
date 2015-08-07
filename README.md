@@ -1,22 +1,22 @@
-#getdirs
+# getdirs
 ==================
-###To install :
+### To install :
 ```bash
 npm install getdirs
 ```
 
-###To use
+### To use
 ```js
-var getdirs=require('getdirs');
+var getdirs = require('getdirs');
 
-getdirs.flat(path.resolve("./"),{},function(err,out)
+getdirs.flat('./',function(err,out)
 {
     if (!err)
         console.log(out);
    //[ 'Have Better', 'I Should' ]
 });
 
-getdirs.nested(path.resolve("./"),{},function(err,out)
+getdirs.nested('./',function(err,out)
 {
     if (!err)
         console.log(out);
@@ -32,9 +32,9 @@ getdirs.nested(path.resolve("./"),{},function(err,out)
 });
 ```
 
-##API
+## API
 
-###flat(directory,[options],callback)
+### flat(directory,[options],callback)
 
 Retrieves a flat listing of all the folders within a directory,ie if there are nested folders, these are not listed.Flat listing is included for optimization.
 T
@@ -52,33 +52,33 @@ T
 
 **callback**: Function . Callback function that adheres to the format function(err,out).Out is an array  of strings
 
-###flatSync(directory,[options])
+### flatSync(directory,[options])
 Synchronous version of **flat**
 
 ```js
 
-var allFolders=getdirs.flat("/etc/");
+var allFolders = getdirs.flat("./etc/");
 //['something']
 
-var allFoldersObj=getdirs.flat("/etc/",{asObj:true});
+var allFoldersObj = getdirs.flat("./etc/",{asObj:true});
 //{'something':true}
 
-var allFiles=getdirs.flat("/etc/",{onlyFiles:true});
-//['something.else']
+var allFiles = getdirs.flat("./etc/",{onlyFiles:true});
+//['someFile.else']
 
-var all=getdirs.flat("/etc/",{includeFiles:true});
-//['something','something.else']
+var all = getdirs.flat("./etc/",{includeFiles:true});
+//['something','someFile.else']
 
 ```
 
-###nested(directory,[options],callback)
+### nested(directory,[options],callback)
 
 Retrieves a nested listing of all the folders within a directory.The *default* returned object will adhere to the structure 
 
 ```js
 {
     //name: Name of the folder
-    //dir: Object. Keys are folder names , values are these object
+    //dir: Object. Keys are folder names , values are these objects
     //dirnames:Array of strings.Names of the immediate child folders
     //filenames:Array of filenames in directory.
     //filenames ONLY exists if includeFiles==true for the below options 
@@ -92,13 +92,16 @@ This can be changed by altering the **options** newFile and newFolder argument.
 
 **options**: Object
 
---*noHidden*: Boolean .Whether to list hidden directories , ie those that start with '.'. Default : false , hidden folders will be shown 
+--*noHidden*: **false** Boolean.Whether to list hidden directories , ie those that start with '.'. 
 
---*includeFiles*:Boolean.Whether to add file listing to the returned object. Default false.
+--*includeFiles*: **false** Boolean.Whether to add file listing to the returned object.
 
---*includeFileStats*:Boolean.Whether to include file Stat objects. Default false
+--*includeFileStats*: **false** Boolean.Whether to include file Stat objects. 
 
 --*filter* : function. A function that adheres to the format(dirname).Return false if you do not desire the file passed to you
+
+The following must **only** be overwritten if using a projection mapping or if the actual output is irrelevant as they will overwrite the 
+existing newFile and newFolder functions which add to the returned accumulated object that you recieve
 
 --*newFile*: function to execute on encountering a file in the filepath when includeFiles is true . function(parent,filename,absolutefilepath,stats)
 
@@ -107,27 +110,30 @@ This can be changed by altering the **options** newFile and newFolder argument.
 **callback**: Function . Callback function that adheres to the format: function(err,out)
 
 Example of projection mapping
+
+In this example we create a new folder on encountering one in the filesystem, and link it to its parent LocalFolder. Since the first 
+Folder we create will have no parent we have a check to see that the parent exists
 ```js
 //example 
-var path = require('path');
 
-var newFolder=function(parent,name,abspath)
+function newFolder (parent,name,abspath)
 {
     var newFolder= new LocalFolder(name,abspath);
-    parent&&parent.link(newFolder);
+    if (parent)
+        parent.link(newFolder);
     return newFolder;
-};
+}
 
-getdir.nested(path.resolve('./'),{noHidden:true,newFolder:newFolder},function(err,out)
+getdir.nested('./',{ noHidden:true, newFolder:newFolder },function(err,out)
 {
     //etc
 });
 
 ```
-###nestedSync(directory,[options])
+### nestedSync(directory,[options])
 Synchronous version of **nested**
 
-###list(root,relpath)
+### list(root,relpath)
 
 Retrieves the correct folder object from the tree relative to the root path of the folder directory
 
@@ -138,11 +144,9 @@ Retrieves the correct folder object from the tree relative to the root path of t
 Returns undefined if no structure exists within the root object that follows that path else returns the relative root that adheres to the path.It will have the same structure as the output from **nested**
 
 ```js
-var path = require('path');
-
-getdir.nested(path.resolve('./'),function(err,out)
+getdir.nested('./',function(err,out)
 {
-    var relroot=gedir.list(out,"some/relative/path");
+    var relroot = getdir.list(out,"some/relative/path");
 });
 
 ```

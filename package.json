@@ -1,24 +1,26 @@
 {
     "name": "getdirs",
     "author": "titon <titon1235@gmail.com>",
-    "version": "0.2.10",
-    "keywords":"file directory stat list tree hierachy",
-    "description": "Utility for retrieving a listing of file directories",
-    "repository": {
+    "version": "0.2.14",
+    "keywords": "file, directory, stat, list, tree, hierachy, filesystem",
+    "description": "Utility for retrieving a listing of file directories and files as well as projection mapping and filtering ",
+    "repository":
+    {
         "type": "git",
-        "url": "git://github.com/EitriumTech/getDirs.git"
+        "url": "git://github.com/auxolust/getDirs.git"
     },
     "main": "./index.js",
-    "dependencies": {},
-    "bugs": {
-        "url": "https://github.com/EitriumTech/getDirs/issues",
+    "dependencies":
+    {},
+    "bugs":
+    {
+        "url": "https://github.com/auxolust/getDirs/issues",
         "email": "titon1235@gmail.com"
     },
-    "homepage": "https://github.com/EitriumTech/getDirs",
+    "homepage": "https://github.com/auxolust/getDirs",
     "maintainers": [
-        {
-            "name": "titon",
-            "email": "titon1235@gmail.com"
-        }
-    ]
+    {
+        "name": "titon",
+        "email": "titon1235@gmail.com"
+    }]
 }

@@ -142,22 +142,26 @@ exports.nestedSync = function(dir, opt)
 
     function getDirectories(dir, parent)
     {
-        var files = fs.readdirSync(dir);
-        for (var i = 0, c = files.length; i < c; i++)
-        {
-            var inQuestion = files[i];
-            //Skip hidden files or ignored files if enabled
-            if (opt.noHidden && inQuestion[0] == '.' || !opt.filter(path.join(dir, inQuestion))) continue;
-            var fileDir = path.join(dir, inQuestion),
-                ev = fs.statSync(fileDir);
-            if (ev.isDirectory())
+        try {
+            var files = fs.readdirSync(dir);
+            for (var i = 0, c = files.length; i < c; i++)
             {
-                var newBranch = opt.newFolder(parent, inQuestion, fileDir);
-                if (opt.includeFiles && opt.newFolder === newFolder) newBranch.filenames = [];
-                if (opt.includeFileStats) newBranch.fileStats = {};
-                getDirectories(fileDir, newBranch);
+                var inQuestion = files[i];
+                //Skip hidden files or ignored files if enabled
+                if (opt.noHidden && inQuestion[0] == '.' || !opt.filter(path.join(dir, inQuestion))) continue;
+                var fileDir = path.join(dir, inQuestion),
+                    ev = fs.statSync(fileDir);
+                if (ev.isDirectory())
+                {
+                    var newBranch = opt.newFolder(parent, inQuestion, fileDir);
+                    if (opt.includeFiles && opt.newFolder === newFolder) newBranch.filenames = [];
+                    if (opt.includeFileStats) newBranch.fileStats = {};
+                    getDirectories(fileDir, newBranch);
+                }
+                else if (opt.includeFiles) opt.newFile(parent, inQuestion, fileDir, opt.includeFileStats ? ev : null);
             }
-            else if (opt.includeFiles) opt.newFile(parent, inQuestion, fileDir, opt.includeFileStats ? ev : null);
+        } catch(err) {
+            // doing nothing on readdir error
         }
     }
     getDirectories(dir, accumulator);
